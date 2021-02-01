@@ -15,7 +15,7 @@ def movement_sequence(step):
         output = np.array([0.2, 0.1, -1.1, 0, 0.2, -1])
 
     if step >= 1500 and step < 2000:
-        output = np.array([0.5, -0.1, -0.5, 0, 0, 0])
+        output = np.array([0.5, -0.3, -0.5, 0, 0, 0])
 
     
     return output
@@ -46,7 +46,7 @@ def pd_controller(plant):
     des_dot = np.array([0, 0, 0, 0, 0, 0])
     err_dot = des_dot - y[j_i:]
 
-    kp = np.diag(np.array([10, 100, 50, 5, 20, 5]))
+    kp = np.diag(np.array([10, 100, 100, 5, 20, 5]))
     kd = np.diag(np.array([1, 10, 10, 0.1, 0.15, 0]))
     sys_in = kp @ err + kd @ err_dot
 
@@ -79,7 +79,7 @@ if __name__ == "__main__":
 
     # this graph is for closed loop position control
     if args.plot:
-        joi = 5
+        joi = 2
         plt.plot(sim_data[:, (joi - 1) + 6], 'r', label="Joint {0} Output Position".format(joi))
         if args.plot_torque:
             plt.plot(sim_data[:, joi - 1], 'r--', label="Joint {0} Input Torque".format(joi))
