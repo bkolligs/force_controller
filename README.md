@@ -1,2 +1,2 @@
 # force_controller
-Force control for the xarm6
+Force control simulation in MuJoCo for the xarm6
