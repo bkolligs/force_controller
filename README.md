@@ -1,2 +1,2 @@
 # force_controller
-Force control for various robots
+Force control for the xarm6
