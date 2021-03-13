@@ -5,17 +5,25 @@ import numpy as np
 import matplotlib.pyplot as plt
 import argparse
 
+
+def position_move(q1, q2, q3, q4, q5, q6):
+    return np.array([q1, q2, q3, q4, q5, q6])
+
+
 def movement_sequence(step):
     output = np.zeros(6)
 
     if step < 1000:
-        output = np.array([0.2, 0, -1, 0, 0, -1])
+        output = position_move(0.5, -0.3, -0.3, 0, 0, 0)
+    
+    if step >= 1000 and step < 1250:
+        output = position_move(0.5, -0.3, -0.3, 0, 0.2, -1)
 
-    if step >= 1000 and step < 1500:
-        output = np.array([0.2, 0.1, -1.1, 0, 0.2, -1])
+    if step >= 1250 and step < 1500:
+        output = position_move(1, 0.3, -1.2, 0, 0.2, -1)
 
     if step >= 1500 and step < 2000:
-        output = np.array([0.5, -0.3, -0.5, 0, 0, 0])
+        output = position_move(0.5, -0.3, -0.5, 0, 0, 0)
 
     
     return output
@@ -42,13 +50,14 @@ def pd_controller(plant):
     # simple PD controller
     des = movement_sequence(step)
     err = des - y[:j_i]
+
     
     des_dot = np.array([0, 0, 0, 0, 0, 0])
     err_dot = des_dot - y[j_i:]
 
-    kp = np.diag(np.array([10, 100, 100, 5, 20, 5]))
+    kp = np.diag(np.array([10, 80, 100, 5, 20, 5]))
     kd = np.diag(np.array([1, 10, 10, 0.1, 0.15, 0]))
-    sys_in = kp @ err + kd @ err_dot
+    sys_in = kp @ err + kd @ err_dot # + plant._sim.data.qfrc_bias
 
     u = plant.system_input(sys_in)
     return np.concatenate((u, y))
@@ -79,7 +88,7 @@ if __name__ == "__main__":
 
     # this graph is for closed loop position control
     if args.plot:
-        joi = 2
+        joi = 1
         plt.plot(sim_data[:, (joi - 1) + 6], 'r', label="Joint {0} Output Position".format(joi))
         if args.plot_torque:
             plt.plot(sim_data[:, joi - 1], 'r--', label="Joint {0} Input Torque".format(joi))
